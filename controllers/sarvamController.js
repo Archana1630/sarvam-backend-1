@@ -7,38 +7,51 @@ const BASE_URL = "https://api.sarvam.ai";
 
 export const speechToText = async (req, res) => {
   try {
-    console.log("🔥 HIT /speech-to-text");
+    console.log("\n========================================");
+    console.log("🎤 SPEECH TO TEXT REQUEST");
+    console.log("========================================");
+
+    const timestamp = new Date().toLocaleString("en-IN", {
+      timeZone: "Asia/Kolkata",
+      year: "numeric",
+      month: "2-digit",
+      day: "2-digit",
+      hour: "2-digit",
+      minute: "2-digit",
+      second: "2-digit",
+      hour12: true,
+    });
+
+    console.log("📅 Request Time :", timestamp);
 
     const file = req.files?.file;
     const language_code = req.body.language_code;
 
-    // ================== LOGGING ==================
     const startTime = Date.now();
-    const now = new Date();
-
-    console.log("========================================");
-    console.log("📅 Date:", now.toLocaleDateString());
-    console.log("🕒 Time:", now.toLocaleTimeString());
-    console.log("📄 File Name:", file?.name);
-    console.log(
-      "📦 File Size:",
-      file ? (file.size / 1024).toFixed(2) + " KB" : "N/A"
-    );
-    console.log(
-      "📂 File Location:",
-      file?.tempFilePath || "Stored In Memory"
-    );
-    console.log("🌍 Language:", language_code);
-    console.log("========================================");
-    // ============================================
 
     if (!file) {
-      return res.status(400).json({ error: "No file uploaded" });
+      return res.status(400).json({
+        error: "No file uploaded",
+      });
     }
 
     if (!process.env.SARVAM_API_KEY) {
-      return res.status(500).json({ error: "Missing API Key" });
+      return res.status(500).json({
+        error: "Missing API Key",
+      });
     }
+
+    console.log("📄 File Name      :", file.name);
+    console.log(
+      "📦 File Size      :",
+      (file.size / 1024).toFixed(2),
+      "KB"
+    );
+    console.log(
+      "📂 File Location  :",
+      file.tempFilePath || "Stored In Memory"
+    );
+    console.log("🌍 Language       :", language_code);
 
     const formData = new FormData();
 
@@ -59,23 +72,21 @@ export const speechToText = async (req, res) => {
       }
     );
 
-    console.log("🔥 Sarvam Response:", response.data);
-
-    // ================== LOGGING ==================
     const endTime = Date.now();
 
     console.log("----------------------------------------");
-    console.log("📝 Transcript:", response.data.transcript);
-    console.log("⏱ Processing Time:", endTime - startTime, "ms");
-    console.log("----------------------------------------");
-    // ============================================
+    console.log("📝 Transcript     :", response.data.transcript);
+    console.log("🌍 Detected Lang  :", response.data.language_code);
+    console.log("⏱ Processing Time :", endTime - startTime, "ms");
+    console.log("========================================\n");
 
     return res.json(response.data);
   } catch (error) {
-    console.log(
-      "❌ STT ERROR:",
-      error?.response?.data || error.message
-    );
+    console.log("\n========================================");
+    console.log("❌ SPEECH TO TEXT ERROR");
+    console.log("----------------------------------------");
+    console.log(error?.response?.data || error.message);
+    console.log("========================================\n");
 
     return res.status(500).json({
       error: "Speech to text failed",
@@ -87,25 +98,34 @@ export const speechToText = async (req, res) => {
 
 export const translateText = async (req, res) => {
   try {
+    console.log("\n========================================");
+    console.log("🌐 TRANSLATION REQUEST");
+    console.log("========================================");
+
+    const timestamp = new Date().toLocaleString("en-IN", {
+      timeZone: "Asia/Kolkata",
+      year: "numeric",
+      month: "2-digit",
+      day: "2-digit",
+      hour: "2-digit",
+      minute: "2-digit",
+      second: "2-digit",
+      hour12: true,
+    });
+
+    console.log("📅 Request Time :", timestamp);
+
     const {
       input,
       source_language_code,
       target_language_code,
     } = req.body;
 
-    // ================== LOGGING ==================
     const startTime = Date.now();
-    const now = new Date();
 
-    console.log("========================================");
-    console.log("📅 Date:", now.toLocaleDateString());
-    console.log("🕒 Time:", now.toLocaleTimeString());
-    console.log("🌐 Route: /translate");
-    console.log("🌍 Source Language:", source_language_code);
-    console.log("🎯 Target Language:", target_language_code);
-    console.log("📝 Input:", input);
-    console.log("========================================");
-    // ============================================
+    console.log("🌍 Source Language :", source_language_code);
+    console.log("🎯 Target Language :", target_language_code);
+    console.log("📝 Input Text      :", input);
 
     const response = await axios.post(
       `${BASE_URL}/translate`,
@@ -121,20 +141,20 @@ export const translateText = async (req, res) => {
       }
     );
 
-    // ================== LOGGING ==================
     const endTime = Date.now();
 
-    console.log("✅ Translation:", response.data);
-    console.log("⏱ Processing Time:", endTime - startTime, "ms");
-    console.log("========================================");
-    // ============================================
+    console.log("----------------------------------------");
+    console.log("✅ Translation    :", response.data);
+    console.log("⏱ Processing Time :", endTime - startTime, "ms");
+    console.log("========================================\n");
 
     return res.json(response.data);
   } catch (error) {
-    console.log(
-      "❌ TRANSLATE ERROR:",
-      error?.response?.data || error.message
-    );
+    console.log("\n========================================");
+    console.log("❌ TRANSLATION ERROR");
+    console.log("----------------------------------------");
+    console.log(error?.response?.data || error.message);
+    console.log("========================================\n");
 
     return res.status(500).json({
       error: "Translation failed",
