@@ -12,6 +12,26 @@ export const speechToText = async (req, res) => {
     const file = req.files?.file;
     const language_code = req.body.language_code;
 
+    // ================== LOGGING ==================
+    const startTime = Date.now();
+    const now = new Date();
+
+    console.log("========================================");
+    console.log("📅 Date:", now.toLocaleDateString());
+    console.log("🕒 Time:", now.toLocaleTimeString());
+    console.log("📄 File Name:", file?.name);
+    console.log(
+      "📦 File Size:",
+      file ? (file.size / 1024).toFixed(2) + " KB" : "N/A"
+    );
+    console.log(
+      "📂 File Location:",
+      file?.tempFilePath || "Stored In Memory"
+    );
+    console.log("🌍 Language:", language_code);
+    console.log("========================================");
+    // ============================================
+
     if (!file) {
       return res.status(400).json({ error: "No file uploaded" });
     }
@@ -41,6 +61,15 @@ export const speechToText = async (req, res) => {
 
     console.log("🔥 Sarvam Response:", response.data);
 
+    // ================== LOGGING ==================
+    const endTime = Date.now();
+
+    console.log("----------------------------------------");
+    console.log("📝 Transcript:", response.data.transcript);
+    console.log("⏱ Processing Time:", endTime - startTime, "ms");
+    console.log("----------------------------------------");
+    // ============================================
+
     return res.json(response.data);
   } catch (error) {
     console.log(
@@ -64,6 +93,20 @@ export const translateText = async (req, res) => {
       target_language_code,
     } = req.body;
 
+    // ================== LOGGING ==================
+    const startTime = Date.now();
+    const now = new Date();
+
+    console.log("========================================");
+    console.log("📅 Date:", now.toLocaleDateString());
+    console.log("🕒 Time:", now.toLocaleTimeString());
+    console.log("🌐 Route: /translate");
+    console.log("🌍 Source Language:", source_language_code);
+    console.log("🎯 Target Language:", target_language_code);
+    console.log("📝 Input:", input);
+    console.log("========================================");
+    // ============================================
+
     const response = await axios.post(
       `${BASE_URL}/translate`,
       {
@@ -77,6 +120,14 @@ export const translateText = async (req, res) => {
         },
       }
     );
+
+    // ================== LOGGING ==================
+    const endTime = Date.now();
+
+    console.log("✅ Translation:", response.data);
+    console.log("⏱ Processing Time:", endTime - startTime, "ms");
+    console.log("========================================");
+    // ============================================
 
     return res.json(response.data);
   } catch (error) {
